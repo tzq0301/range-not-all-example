@@ -3,13 +3,16 @@ module range-not-all-example
 go 1.19
 
 require (
-	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/smartystreets/goconvey v1.7.2
+	gorm.io/driver/sqlite v1.4.4
+	gorm.io/gorm v1.24.3
+)
+
+require (
+	github.com/gopherjs/gopherjs v0.0.0-20181017120253-0766667cb4d1 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
+	github.com/jtolds/gls v4.20.0+incompatible // indirect
 	github.com/mattn/go-sqlite3 v1.14.16 // indirect
-	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/stretchr/testify v1.8.1 // indirect
-	gopkg.in/yaml.v3 v3.0.1 // indirect
-	gorm.io/driver/sqlite v1.4.4 // indirect
-	gorm.io/gorm v1.24.3 // indirect
+	github.com/smartystreets/assertions v1.2.0 // indirect
 )

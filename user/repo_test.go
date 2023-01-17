@@ -2,7 +2,7 @@ package user
 
 import (
 	"embed"
-	"github.com/stretchr/testify/assert"
+	. "github.com/smartystreets/goconvey/convey"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"testing"
@@ -36,34 +36,56 @@ func mockRepo() (Repository, error) {
 }
 
 func Test_repositoryImpl_GetAll(t *testing.T) {
-	a := assert.New(t)
+	Convey("获取全量数据", t, func() {
+		repo, err := mockRepo()
+		So(err, ShouldBeNil)
 
-	repo, err := mockRepo()
+		users, err := repo.GetAll()
+		So(err, ShouldBeNil)
 
-	users, err := repo.GetAll()
-	a.NoError(err)
-
-	var userIDs []int64
-	for _, user := range users {
-		userIDs = append(userIDs, user.ID)
-	}
-
-	a.Equal(1000, len(userIDs))
-}
-
-func Test_repositoryImpl_Range(t *testing.T) {
-	a := assert.New(t)
-
-	repo, err := mockRepo()
-
-	var userIDs []int64
-	err = repo.Range(func(users []*User) (stop bool) {
+		var userIDs []int64
 		for _, user := range users {
 			userIDs = append(userIDs, user.ID)
 		}
-		return false
-	})
-	a.NoError(err)
 
-	a.Equal(1000, len(userIDs))
+		So(len(userIDs), ShouldEqual, 1_000)
+	})
+}
+
+func Test_repositoryImpl_Range(t *testing.T) {
+	Convey("使用 Range 获取部分数据", t, func() {
+		repo, err := mockRepo()
+		So(err, ShouldBeNil)
+
+		Convey("获取全部的 ID", func() {
+			var userIDs []int64
+			err = repo.Range(func(users []*User) (stop bool) {
+				for _, user := range users {
+					userIDs = append(userIDs, user.ID)
+				}
+				return false
+			})
+
+			So(err, ShouldBeNil)
+			So(len(userIDs), ShouldEqual, 1_000)
+		})
+
+		Convey("获取 100 条 ID", func() {
+			var userIDs []int64
+			count := 0
+			err = repo.Range(func(users []*User) (stop bool) {
+				for _, user := range users {
+					userIDs = append(userIDs, user.ID)
+					count++
+					if count == 100 {
+						return true
+					}
+				}
+				return false
+			})
+
+			So(err, ShouldBeNil)
+			So(len(userIDs), ShouldEqual, 100)
+		})
+	})
 }
