@@ -11,18 +11,26 @@ import (
 //go:embed user.sql
 var f embed.FS
 
+func readSQL() (string, error) {
+	file, err := f.ReadFile("user.sql")
+	if err != nil {
+		return "", err
+	}
+	return string(file), nil
+}
+
 func mockDB() (*gorm.DB, error) {
 	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
 	if err != nil {
 		return nil, err
 	}
 
-	file, err := f.ReadFile("user.sql")
+	sql, err := readSQL()
 	if err != nil {
 		return nil, err
 	}
 
-	db = db.Exec(string(file))
+	db = db.Exec(sql)
 
 	return db, nil
 }
